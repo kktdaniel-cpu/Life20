@@ -420,22 +420,22 @@
                 <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div class="text-center bg-amber-50 p-8 rounded-2xl shadow-lg">
                         <div class="text-5xl">🧑‍💼</div>
-                        <h4 class="mt-4 text-xl font-bold text-gray-900">신동주</h4>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">김영범</h4>
                         <p class="mt-1 text-green-700 font-semibold">CEO (대표)</p>
                     </div>
                     <div class="text-center bg-amber-50 p-8 rounded-2xl shadow-lg">
                         <div class="text-5xl">👩‍🔬</div>
-                        <h4 class="mt-4 text-xl font-bold text-gray-900">박혜린</h4>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">홍인철</h4>
                         <p class="mt-1 text-green-700 font-semibold">CSO (전략)</p>
                     </div>
                     <div class="text-center bg-amber-50 p-8 rounded-2xl shadow-lg">
                         <div class="text-5xl">👨‍💻</div>
-                        <h4 class="mt-4 text-xl font-bold text-gray-900">김철영</h4>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">김규한</h4>
                         <p class="mt-1 text-green-700 font-semibold">CTO (기술)</p>
                     </div>
                     <div class="text-center bg-amber-50 p-8 rounded-2xl shadow-lg">
                         <div class="text-5xl">👨‍💼</div>
-                        <h4 class="mt-4 text-xl font-bold text-gray-900">이민수</h4>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">김수련</h4>
                         <p class="mt-1 text-green-700 font-semibold">CFO (재무)</p>
                     </div>
                 </div>
