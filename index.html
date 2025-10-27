@@ -3,21 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LifePlan+ 투자제안서</title>
+    <title>Life2.0 | ESG 생산 플랫폼</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Harmony (bg-gray-50, text-gray-800, accent text-blue-600) -->
-    <!-- Application Structure Plan: A top-down, single-page narrative designed for investors. It starts with the market opportunity, defines the problem, presents LifePlan+ as the solution, details the business model and financials, and concludes with the investment ask and team. This structure builds a compelling case logically, moving from 'why now' to 'how we'll win'. Interactive elements like tabs for services and dynamic charts for financials allow for deeper dives without leaving the main flow, prioritizing quick comprehension and detailed exploration. -->
-    <!-- Visualization & Content Choices: Market Stats -> Goal: Inform/Impress -> Presentation: Large KPI cards -> Interaction: Hover for detail -> Justification: Quickly conveys scale. Core Services -> Goal: Organize/Explain -> Presentation: Tabbed interface -> Interaction: Click to switch content -> Justification: Prevents information overload. Roadmap -> Goal: Show Change -> Presentation: Horizontal timeline -> Interaction: Click to highlight phase -> Justification: Visualizes progress clearly. Financials -> Goal: Compare/Show Change -> Viz: Bar Chart (Revenue), Line Chart (BEP) -> Interaction: Tooltips for data points -> Justification: Standard, effective way to show financial projections. Library: Chart.js for all charts due to its simplicity and responsiveness. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Warm Neutrals (Amber/Green/Gray) -->
+    <!-- Application Structure Plan: A single-page, top-down narrative scroll SPA. This structure is ideal for a pitch-deck-style report, guiding the user logically from the core concept (Hero) -> Problem -> Solution -> Value -> Model -> Traction -> Roadmap. Key interactions include: 1. Sticky navigation for quick jumps. 2. Tabbed-card interface for the 'Solution' components (LPPA, Moss, FAM) to prevent content overload. 3. Interactive timeline for the 'Roadmap' (Phase 1/2/3 clicks). 4. An interactive Chart.js bar chart for 'Value Proposition' to visually compare benefits for stakeholders. This design prioritizes clarity, persuasive flow, and focused interaction over a complex dashboard, matching the report's goal of explaining a new business model. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: 3 Pillars (PV, Bio, Finance). Goal: Organize/Inform. Viz/Method: 3-column interactive diagram (HTML/Tailwind). Interaction: Hover effects to highlight each pillar. Justification: Visually represents the core fusion concept. Library: HTML/Tailwind.
+        - Report Info: 3 Solution Components (LPPA, Moss, FAM). Goal: Organize/Inform (detailed). Viz/Method: Tabbed interface. Interaction: Click buttons to toggle visibility of detailed text descriptions for each component. Justification: Manages information density, allowing users to explore details on demand. Library: JS (click events, class toggling).
+        - Report Info: Value Proposition (PV Devs +40% profit, Senior income, Community jobs). Goal: Compare/Inform. Viz/Method: Vertical Bar Chart (Chart.js). Interaction: Tooltips on hover provide specific data. Justification: Clearly compares the value delivered to different key stakeholders. Library: Chart.js (Canvas).
+        - Report Info: Business Model (B2B, B2C). Goal: Inform/Organize. Viz/Method: 2-column layout with simple HTML/Tailwind flowchart arrows. Justification: Simple, clear explanation of revenue streams. Library: HTML/Tailwind.
+        - Report Info: 3-Year Roadmap (Phases 1, 2, 3). Goal: Show Change/Time. Viz/Method: Interactive Timeline (HTML/Tailwind). Interaction: Click on each phase (buttons/tabs) to display its specific goals. Justification: More engaging and less cluttered than a static list; shows progression. Library: JS (click events, class toggling).
+    -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
     <style>
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f9fafb;
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: #fffaf0;
             color: #1f2937;
+        }
+        .hero-bg {
+            background-color: #fdfbf6;
         }
         .chart-container {
             position: relative;
@@ -25,578 +36,543 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
-            height: 300px;
+            height: 350px;
             max-height: 400px;
         }
         @media (min-width: 768px) {
             .chart-container {
-                height: 350px;
+                height: 400px;
             }
         }
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #3b82f6;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
+        html {
+            scroll-padding-top: 5rem;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .tab-btn.active {
+            background-color: #15803d;
+            color: #ffffff;
+        }
+        .tab-btn {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        .phase-btn.active {
+            background-color: #1d4ed8;
+            color: #ffffff;
+        }
+        .phase-btn {
+            background-color: #e0e7ff;
+            color: #374151;
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="antialiased">
 
-    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
-        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-blue-600">LifePlan+</a>
-            <div class="hidden md:flex space-x-8">
-                <a href="#opportunity" class="text-gray-600 hover:text-blue-600">시장 기회</a>
-                <a href="#solution" class="text-gray-600 hover:text-blue-600">솔루션</a>
-                <a href="#business" class="text-gray-600 hover:text-blue-600">사업 계획</a>
-                <a href="#investment" class="text-gray-600 hover:text-blue-600">투자 제안</a>
-                <a href="#team" class="text-gray-600 hover:text-blue-600">팀</a>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0">
+                    <a href="#home" class="text-3xl font-extrabold text-gray-800">
+                        Life<span class="text-green-700">2.0</span>
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="nav-link text-gray-600 hover:text-green-700 px-3 py-2 rounded-md text-base font-medium">홈</a>
+                        <a href="#problem" class="nav-link text-gray-600 hover:text-green-700 px-3 py-2 rounded-md text-base font-medium">문제점</a>
+                        <a href="#solution" class="nav-link text-gray-600 hover:text-green-700 px-3 py-2 rounded-md text-base font-medium">솔루션</a>
+                        <a href="#value" class="nav-link text-gray-600 hover:text-green-700 px-3 py-2 rounded-md text-base font-medium">핵심 가치</a>
+                        <a href="#model" class="nav-link text-gray-600 hover:text-green-700 px-3 py-2 rounded-md text-base font-medium">비즈니스 모델</a>
+                        <a href="#roadmap" class="nav-link text-gray-600 hover:text-green-700 px-3 py-2 rounded-md text-base font-medium">로드맵</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-800 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-600">
+                        <span class="sr-only">메뉴 열기</span>
+                        <span class="text-2xl">☰</span>
+                    </button>
+                </div>
             </div>
-            <a href="#investment" class="hidden md:block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">투자 문의</a>
         </nav>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="nav-link-mobile text-gray-600 hover:bg-gray-50 hover:text-green-700 block px-3 py-2 rounded-md text-base font-medium">홈</a>
+                <a href="#problem" class="nav-link-mobile text-gray-600 hover:bg-gray-50 hover:text-green-700 block px-3 py-2 rounded-md text-base font-medium">문제점</a>
+                <a href="#solution" class="nav-link-mobile text-gray-600 hover:bg-gray-50 hover:text-green-700 block px-3 py-2 rounded-md text-base font-medium">솔루션</a>
+                <a href="#value" class="nav-link-mobile text-gray-600 hover:bg-gray-50 hover:text-green-700 block px-3 py-2 rounded-md text-base font-medium">핵심 가치</a>
+                <a href="#model" class="nav-link-mobile text-gray-600 hover:bg-gray-50 hover:text-green-700 block px-3 py-2 rounded-md text-base font-medium">비즈니스 모델</a>
+                <a href="#roadmap" class="nav-link-mobile text-gray-600 hover:bg-gray-50 hover:text-green-700 block px-3 py-2 rounded-md text-base font-medium">로드맵</a>
+            </div>
+        </div>
     </header>
 
     <main>
-        <section id="hero" class="bg-white">
-            <div class="container mx-auto px-6 py-24 text-center">
-                <h1 class="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">행복한 은퇴의 모든 것,<br class="hidden md:block"> 원스톱 솔루션 LifePlan+</h1>
-                <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">LifePlan+는 고령 인구를 위한 맞춤형 원스톱 솔루션으로 은퇴자의 안정적인 노후를 지원합니다. 저희는 복잡하고 분산된 은퇴 준비 과정을 통합하여 신뢰할 수 있는 정보를 제공하고, 개인별 최적의 인생 후반 계획을 설계해 드립니다.</p>
-            </div>
-        </section>
-
-        <section id="opportunity" class="py-20">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold">거대하고 빠르게 성장하는 시장</h2>
-                    <p class="mt-4 text-gray-600">2025년 초고령사회 진입을 앞둔 대한민국, 시니어 산업은 폭발적인 성장을 예고하고 있습니다.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-                        <h3 class="text-4xl font-bold text-blue-600">20%</h3>
-                        <p class="mt-2 text-gray-700 font-semibold">65세 이상 인구 비율</p>
-                        <p class="mt-1 text-sm text-gray-500">(2025년 기준)</p>
-                    </div>
-                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-                        <h3 class="text-4xl font-bold text-blue-600">85조원</h3>
-                        <p class="mt-2 text-gray-700 font-semibold">2024년 시장 규모</p>
-                        <p class="mt-1 text-sm text-gray-500">(국내 시니어 산업)</p>
-                    </div>
-                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-                        <h3 class="text-4xl font-bold text-blue-600">~520조원</h3>
-                        <p class="mt-2 text-gray-700 font-semibold">2030년 시장 전망</p>
-                        <p class="mt-1 text-sm text-gray-500">(최대 추정치)</p>
-                    </div>
-                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-                        <h3 class="text-4xl font-bold text-blue-600">10-15%</h3>
-                        <p class="mt-2 text-gray-700 font-semibold">연평균 시장 성장률</p>
-                        <p class="mt-1 text-sm text-gray-500">(주거/요양/상조 분야)</p>
-                    </div>
+        <!-- Hero Section -->
+        <section id="home" class="min-h-screen flex items-center justify-center hero-bg px-4">
+            <div class="text-center max-w-4xl">
+                <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 leading-tight">
+                    태양광 × 바이오 × 시니어 금융의 융합
+                </h1>
+                <p class="mt-6 text-3xl md:text-5xl font-bold text-green-700">
+                    ESG 생산 플랫폼
+                </p>
+                <p class="mt-8 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+                    PV 하부의 비효율 공간을 고수익 바이오 생산지이자 시니어 소득 플랫폼으로 전환합니다. 라이프이점영은 기술 기반의 사회안전망을 설계합니다.
+                </p>
+                <div class="mt-12 flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#solution" class="inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-green-800 transition duration-300">
+                        솔루션 보기
+                    </a>
+                    <a href="#roadmap" class="inline-block bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-lg text-lg hover:bg-gray-300 transition duration-300">
+                        성장 전략
+                    </a>
                 </div>
             </div>
         </section>
 
-        <section id="problem" class="py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold">은퇴자들이 겪는 현실적인 어려움</h2>
-                    <p class="mt-4 text-gray-600">은퇴 후 삶을 준비하는 과정은 복잡하고 어렵습니다. 정보는 넘쳐나지만 신뢰할 수 있는 곳은 드뭅니다.</p>
+        <!-- Problem Section -->
+        <section id="problem" class="py-20 md:py-28 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-green-700 tracking-wide uppercase">The Problem</h2>
+                    <p class="mt-2 text-4xl md:text-5xl font-extrabold text-gray-900">시장의 이중 비효율</p>
+                    <p class="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-gray-600">
+                        우리는 현재 시장이 직면한 두 가지 핵심 비효율성, 즉 '이중 비효율'에 주목합니다. 이는 새로운 기회를 창출할 중요한 출발점입니다.
+                    </p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="text-center p-6">
-                        <div class="text-4xl mb-4 text-blue-600">🧩</div>
-                        <h3 class="text-xl font-bold mb-2">정보의 파편화</h3>
-                        <p class="text-gray-600">금융, 주거, 건강, 상속 등 필요한 정보가 여러 곳에 흩어져 있어 종합적인 계획 수립이 어렵습니다.</p>
+                <div class="mt-16 grid md:grid-cols-2 gap-8 md:gap-12">
+                    <div class="bg-amber-50 rounded-2xl shadow-lg p-8 transform hover:scale-105 transition-transform duration-300">
+                        <div class="text-5xl">🚜</div>
+                        <h3 class="mt-4 text-2xl font-bold text-gray-900">영농형 태양광의 한계</h3>
+                        <p class="mt-4 text-base text-gray-600">
+                            기존 영농형 태양광 시스템은 식량과 에너지 생산을 동시에 추구하지만, 구조적 문제로 인해 식량 수확량이 약 30% 감소합니다. 이는 토지 이용의 효율성을 저해하고 농가 소득에 타격을 줍니다.
+                        </p>
                     </div>
-                    <div class="text-center p-6">
-                        <div class="text-4xl mb-4 text-blue-600">📜</div>
-                        <h3 class="text-xl font-bold mb-2">복잡한 절차와 비용</h3>
-                        <p class="text-gray-600">각 분야의 전문가를 찾고 상담하는 과정이 번거롭고, 불투명한 비용 구조로 인해 부담이 큽니다.</p>
-                    </div>
-                    <div class="text-center p-6">
-                        <div class="text-4xl mb-4 text-blue-600">🤝</div>
-                        <h3 class="text-xl font-bold mb-2">신뢰할 수 없는 공급자</h3>
-                        <p class="text-gray-600">검증되지 않은 업체와 전문가들로 인해 잘못된 결정을 내릴 위험이 상존합니다.</p>
+                    <div class="bg-amber-50 rounded-2xl shadow-lg p-8 transform hover:scale-105 transition-transform duration-300">
+                        <div class="text-5xl">👥</div>
+                        <h3 class="mt-4 text-2xl font-bold text-gray-900">고령화 사회의 비용</h3>
+                        <p class="mt-4 text-base text-gray-600">
+                            급격한 고령화는 노동력 부족과 사회적 비용 증가 문제를 야기합니다. 특히 경험 많은 시니어 인력의 재활용이 부족하며, 안정적인 노후 소득원이 부재한 상황입니다.
+                        </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="solution" class="py-20">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold">LifePlan+: 통합적이고 신뢰할 수 있는 솔루션</h2>
-                    <p class="mt-4 text-gray-600">저희는 AI와 전문가 네트워크를 결합하여 개인에게 최적화된 은퇴 계획을 제공합니다.</p>
+        <!-- Solution Section -->
+        <section id="solution" class="py-20 md:py-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-green-700 tracking-wide uppercase">Our Solution</h2>
+                    <p class="mt-2 text-4xl md:text-5xl font-extrabold text-gray-900">Agri-Bryophyte PV 시스템</p>
+                    <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-600">
+                        라이프이점영은 태양광(PV) 하부의 그늘진 비활용 공간을 활용하여 '이끼(Bryophyte)'를 재배하는 혁신적인 'Structure-as-a-Farm' 모델을 제시합니다.
+                    </p>
                 </div>
-                <div class="max-w-4xl mx-auto">
-                    <div class="mb-8 border-b border-gray-200">
-                        <nav id="serviceTabs" class="flex flex-wrap -mb-px justify-center" aria-label="Tabs">
-                            <button data-target="panel-1" class="tab-button text-blue-600 border-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm md:text-base md:px-4">종합 자산 컨설팅</button>
-                            <button data-target="panel-2" class="tab-button text-gray-500 border-transparent whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm md:text-base md:px-4">맞춤형 건강 관리</button>
-                            <button data-target="panel-3" class="tab-button text-gray-500 border-transparent whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm md:text-base md:px-4">시니어 주거 정보</button>
-                            <button data-target="panel-4" class="tab-button text-gray-500 border-transparent whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm md:text-base md:px-4">상속 및 장례 계획</button>
-                        </nav>
+
+                <div class="mt-16 grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white rounded-2xl shadow-lg p-8 transition-shadow duration-300 hover:shadow-xl">
+                        <span class="text-6xl">⚡</span>
+                        <h3 class="mt-5 text-2xl font-bold text-gray-900">태양광 (PV)</h3>
+                        <p class="mt-2 text-gray-600">에너지 생산 구조물을 농장 인프라로 활용하여 토지 효율성을 극대화합니다.</p>
                     </div>
-                    <div id="servicePanels">
-                        <div id="panel-1" class="tab-panel">
-                             <div class="bg-white p-8 rounded-lg shadow-md">
-                                <h3 class="text-2xl font-bold mb-4">개인 맞춤형 금융 및 자산 컨설팅</h3>
-                                <p class="text-gray-600">AI 기반 분석을 통해 개인의 재무 상태, 투자 성향, 은퇴 후 목표 등을 종합적으로 고려하여 최적의 포트폴리오를 구성하고, 안정적인 현금 흐름을 설계해 드립니다. 검증된 금융 전문가와의 1:1 상담도 지원합니다.</p>
-                            </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-8 transition-shadow duration-300 hover:shadow-xl">
+                        <span class="text-6xl">🌿</span>
+                        <h3 class="mt-5 text-2xl font-bold text-gray-900">바이오 소재 (이끼)</h3>
+                        <p class="mt-2 text-gray-600">그늘에서도 잘 자라는 이끼를 재배하여 고부가가치 바이오 소재를 생산합니다.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-8 transition-shadow duration-300 hover:shadow-xl">
+                        <span class="text-6xl">💰</span>
+                        <h3 class="mt-5 text-2xl font-bold text-gray-900">시니어 금융 (FAM)</h3>
+                        <p class="mt-2 text-gray-600">스마트팜 수익과 연계된 시니어 소득 플랫폼 및 금융 신탁 서비스를 제공합니다.</p>
+                    </div>
+                </div>
+
+                <div class="mt-20">
+                    <h3 class="text-3xl font-bold text-center text-gray-900">솔루션의 핵심 구성 요소</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-center text-lg text-gray-600">
+                        저희 솔루션은 세 가지 핵심 요소가 유기적으로 결합되어 시너지를 창출합니다. 아래 탭을 클릭하여 각 요소의 상세 내용을 확인해보세요.
+                    </p>
+                    <div class="mt-8 flex flex-wrap justify-center gap-4">
+                        <button id="btn-lppa" class="tab-btn active px-6 py-3 font-bold rounded-lg text-lg transition-all duration-300">LPPA 스마트팜</button>
+                        <button id="btn-moss" class="tab-btn px-6 py-3 font-bold rounded-lg text-lg transition-all duration-300">이끼 바이오 모듈</button>
+                        <button id="btn-fam" class="tab-btn px-6 py-3 font-bold rounded-lg text-lg transition-all duration-300">시니어 금융 신탁 (FAM)</button>
+                    </div>
+
+                    <div class="mt-8 max-w-4xl mx-auto">
+                        <div id="content-lppa" class="tab-content bg-white p-8 rounded-2xl shadow-xl">
+                            <h4 class="text-2xl font-bold text-green-700">LPPA (지역 연금 파트너 연합) 스마트팜</h4>
+                            <p class="mt-4 text-gray-700">
+                                '지역 연금 파트너 연합'은 지역 거점 기반의 스마트팜 운영 모델입니다. 이는 안정적인 운영을 보장하고 지역 시니어 일자리를 창출합니다. PV 하부 공간에 설치된 스마트팜은 이끼를 재배하고, 여기서 발생한 수익은 시니어 소득으로 연결됩니다.
+                            </p>
+                            <ul class="mt-4 space-y-2 list-disc list-inside text-gray-600">
+                                <li>지역 거점 기반의 안정적 운영</li>
+                                <li>시니어 맞춤형 일자리 창출</li>
+                                <li>PV 하부 공간의 효율적 활용</li>
+                            </ul>
                         </div>
-                        <div id="panel-2" class="tab-panel hidden">
-                            <div class="bg-white p-8 rounded-lg shadow-md">
-                                <h3 class="text-2xl font-bold mb-4">맞춤형 건강 및 요양 서비스 연결</h3>
-                                <p class="text-gray-600">개인의 건강 상태와 필요에 맞는 요양 시설, 방문 요양 서비스, 건강 관리 프로그램을 추천하고 연결합니다. 신뢰할 수 있는 파트너사만을 엄선하여 양질의 서비스를 보장합니다.</p>
-                            </div>
+                        <div id="content-moss" class="tab-content hidden bg-white p-8 rounded-2xl shadow-xl">
+                            <h4 class="text-2xl font-bold text-green-700">이끼 바이오 모듈</h4>
+                            <p class="mt-4 text-gray-700">
+                                이끼(Bryophyte)는 그늘진 환경에서도 잘 자라며, 화장품, 의약품, 공기 정화 등 다용도로 활용되는 고부가가치 바이오 소재입니다. 저희의 특화된 바이오 모듈은 PV 하부의 저조도 환경에 최적화되어, 최소한의 자원으로 최대의 바이오매스를 생산합니다.
+                            </p>
+                            <ul class="mt-4 space-y-2 list-disc list-inside text-gray-600">
+                                <li>고부가가치 바이오 소재 (화장품, 의약품 원료)</li>
+                                <li>탁월한 공기 정화 기능 (미세먼지 저감)</li>
+                                <li>PV 하부 그늘 환경에 최적화된 생육</li>
+                            </ul>
                         </div>
-                        <div id="panel-3" class="tab-panel hidden">
-                           <div class="bg-white p-8 rounded-lg shadow-md">
-                                <h3 class="text-2xl font-bold mb-4">다양한 시니어 주거 정보 제공</h3>
-                                <p class="text-gray-600">실버타운, 요양원, 고령자 복지주택 등 다양한 형태의 시니어 주거 시설에 대한 상세하고 정확한 정보를 제공합니다. 입주 조건, 비용, 서비스 내용을 비교 분석하여 최적의 선택을 돕습니다.</p>
-                            </div>
-                        </div>
-                        <div id="panel-4" class="tab-panel hidden">
-                            <div class="bg-white p-8 rounded-lg shadow-md">
-                                <h3 class="text-2xl font-bold mb-4">상속, 증여 및 장례 계획 지원</h3>
-                                <p class="text-gray-600">복잡한 상속 및 증여 문제를 명쾌하게 해결할 수 있도록 법률, 세무 전문가와 연결해 드립니다. 또한, 품격있는 장례를 미리 준비할 수 있도록 신뢰할 수 있는 상조 서비스를 안내합니다.</p>
-                            </div>
+                        <div id="content-fam" class="tab-content hidden bg-white p-8 rounded-2xl shadow-xl">
+                            <h4 class="text-2xl font-bold text-green-700">시니어 금융 신탁 (FAM)</h4>
+                            <p class="mt-4 text-gray-700">
+                                '시니어 금융 신탁(FAM)'은 LPPA 스마트팜에서 발생하는 수익을 시니어 참여자들에게 안정적인 소득으로 분배하는 금융 플랫폼입니다. 이는 단순한 일자리를 넘어, 참여자들이 '연금형 소득'을 얻을 수 있는 지속가능한 사회안전망 역할을 합니다.
+                            </p>
+                            <ul class="mt-4 space-y-2 list-disc list-inside text-gray-600">
+                                <li>스마트팜 수익 연계 '연금형 소득' 창출</li>
+                                <li>시니어 인력의 경제 활동 참여 증진</li>
+                                <li>투명하고 안정적인 신탁 기반 금융 서비스</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="business" class="py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold">사업 모델 및 성장 전략</h2>
-                    <p class="mt-4 text-gray-600">다각화된 수익 모델과 단계별 성장 전략을 통해 지속 가능한 성장을 추구합니다.</p>
+        <!-- Value Proposition Section -->
+        <section id="value" class="py-20 md:py-28 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-green-700 tracking-wide uppercase">Value Proposition</h2>
+                    <p class="mt-2 text-4xl md:text-5xl font-extrabold text-gray-900">모두를 위한 가치 창출</p>
+                    <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-600">
+                        Life2.0 모델은 태양광 개발사, 시니어, 그리고 지역 사회 모두에게 측정 가능한 혜택을 제공합니다. 아래 차트는 각 이해관계자에게 돌아가는 핵심 가치를 보여줍니다.
+                    </p>
                 </div>
-
-                <div class="mb-16">
-                    <h3 class="text-2xl font-bold text-center mb-8">수익 모델</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
-                        <div class="text-center">
-                            <div class="text-4xl mb-3">💳</div>
-                            <h4 class="font-bold">구독료</h4>
-                            <p class="text-sm text-gray-600">프리미엄 맞춤형 컨설팅 및 서비스 이용</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-4xl mb-3">🔗</div>
-                            <h4 class="font-bold">중개 수수료</h4>
-                            <p class="text-sm text-gray-600">검증된 파트너사 서비스 연결</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-4xl mb-3">📢</div>
-                            <h4 class="font-bold">광고 및 프로모션</h4>
-                            <p class="text-sm text-gray-600">타겟 고객 대상 광고 플랫폼 제공</p>
-                        </div>
-                        <div class="text-center">
-                           <div class="text-4xl mb-3">📊</div>
-                            <h4 class="font-bold">데이터 판매</h4>
-                            <p class="text-sm text-gray-600">개인정보 비식별화 통계 데이터</p>
-                        </div>
+                <div class="mt-16">
+                    <div class="chart-container">
+                        <canvas id="valueChart"></canvas>
                     </div>
                 </div>
-
-                <div class="mb-16">
-                    <h3 class="text-2xl font-bold text-center mb-8">성장 로드맵</h3>
-                    <div class="relative max-w-5xl mx-auto">
-                        <div class="absolute left-1/2 w-0.5 h-full bg-blue-200 transform -translate-x-1/2"></div>
-                        <div class="relative mb-8">
-                            <div class="absolute left-1/2 w-4 h-4 bg-blue-600 rounded-full transform -translate-x-1/2 mt-1.5"></div>
-                            <div class="md:ml-auto md:w-1/2 md:pl-8 text-left md:text-right">
-                                <div class="bg-gray-100 p-4 rounded-lg">
-                                    <h4 class="font-bold">1단계 (6개월)</h4>
-                                    <p class="text-sm text-gray-600">MVP 개발, 파트너 10곳 확보, 베타 서비스 런칭</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="relative mb-8">
-                            <div class="absolute left-1/2 w-4 h-4 bg-blue-600 rounded-full transform -translate-x-1/2 mt-1.5"></div>
-                             <div class="md:mr-auto md:w-1/2 md:pr-8 text-left">
-                                 <div class="bg-gray-100 p-4 rounded-lg">
-                                    <h4 class="font-bold">2단계 (1년)</h4>
-                                    <p class="text-sm text-gray-600">유료회원 1만명 달성, 전국 서비스 확장, 추가 기능 개발</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="relative">
-                            <div class="absolute left-1/2 w-4 h-4 bg-blue-600 rounded-full transform -translate-x-1/2 mt-1.5"></div>
-                            <div class="md:ml-auto md:w-1/2 md:pl-8 text-left md:text-right">
-                                <div class="bg-gray-100 p-4 rounded-lg">
-                                    <h4 class="font-bold">3단계 (3년)</h4>
-                                    <p class="text-sm text-gray-600">해외 진출(일본), 동남아 시장 확장, 글로벌 파트너십</p>
-                                </div>
-                            </div>
-                        </div>
+                <div class="mt-12 grid md:grid-cols-3 gap-8">
+                    <div class="text-center bg-amber-50 p-6 rounded-xl shadow-md">
+                        <h4 class="text-xl font-bold text-gray-900">PV 개발사</h4>
+                        <p class="mt-2 text-gray-600">토지 효율성 증대로 인한 <span class="font-bold text-green-700">수익 40% 이상 증대</span>, 지역 민원 해결 및 ESG 경영 실현.</p>
                     </div>
-                </div>
-
-                <div>
-                    <h3 class="text-2xl font-bold text-center mb-8">재무 목표</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center max-w-4xl mx-auto mb-12">
-                         <div class="bg-blue-50 p-6 rounded-lg">
-                            <p class="text-sm text-blue-800">3년 후 매출</p>
-                            <p class="text-3xl font-bold text-blue-900">1,000억원</p>
-                        </div>
-                         <div class="bg-blue-50 p-6 rounded-lg">
-                            <p class="text-sm text-blue-800">손익분기점</p>
-                            <p class="text-3xl font-bold text-blue-900">2년차 달성</p>
-                        </div>
-                         <div class="bg-blue-50 p-6 rounded-lg">
-                            <p class="text-sm text-blue-800">목표 IRR</p>
-                            <p class="text-3xl font-bold text-blue-900">20%+</p>
-                        </div>
+                    <div class="text-center bg-amber-50 p-6 rounded-xl shadow-md">
+                        <h4 class="text-xl font-bold text-gray-900">시니어</h4>
+                        <p class="mt-2 text-gray-600">안정적인 <span class="font-bold text-green-700">'연금형' 소득원</span> 확보, 사회 참여 기회 확대를 통한 활기찬 노후.</p>
                     </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <div>
-                            <h4 class="text-xl font-bold text-center mb-4">연간 예상 매출 성장 (단위: 억원)</h4>
-                            <div class="chart-container">
-                                <canvas id="revenueChart"></canvas>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold text-center mb-4">손익분기점 분석</h4>
-                            <div class="chart-container">
-                                <canvas id="bepChart"></canvas>
-                            </div>
-                        </div>
+                    <div class="text-center bg-amber-50 p-6 rounded-xl shadow-md">
+                        <h4 class="text-xl font-bold text-gray-900">지역 사회</h4>
+                        <p class="mt-2 text-gray-600">시니어 일자리 창출을 통한 <span class="font-bold text-green-700">지역 경제 활성화</span> 및 사회적 비용 절감.</p>
                     </div>
-                     <p class="text-center mt-8 text-gray-600 max-w-3xl mx-auto">플랫폼 회원 기반 확대와 유료 서비스 전환에 따라 2년차부터 손익분기점을 돌파하고, 3년차 이후 파트너십 및 데이터 사업으로 수익성을 크게 개선할 것입니다.</p>
                 </div>
             </div>
         </section>
 
-        <section id="investment" class="py-20">
-            <div class="container mx-auto px-6">
-                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold">투자 제안</h2>
-                    <p class="mt-4 text-gray-600">초기 시드 투자로 시장을 선점하고, 후속 투자를 통해 기업 가치를 극대화하고자 합니다.</p>
+        <!-- Business Model Section -->
+        <section id="model" class="py-20 md:py-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-green-700 tracking-wide uppercase">Business Model</h2>
+                    <p class="mt-2 text-4xl md:text-5xl font-extrabold text-gray-900">지속가능한 비즈니스 모델</p>
+                    <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-600">
+                        저희는 B2B와 B2C를 아우르는 듀얼 비즈니스 모델을 통해 안정적이고 확장 가능한 수익 구조를 구축했습니다.
+                    </p>
                 </div>
-                <div class="bg-white max-w-2xl mx-auto rounded-lg shadow-xl overflow-hidden mb-6">
-                    <div class="p-8">
-                        <div class="flex justify-between items-center border-b pb-4 mb-4">
-                            <span class="text-gray-600 font-medium">총 투자 유치금</span>
-                            <span class="text-2xl font-bold text-blue-600">20억원</span>
-                        </div>
-                        <div class="flex justify-between items-center border-b pb-4 mb-4">
-                            <span class="text-gray-600 font-medium">투자 단계</span>
-                            <span class="text-lg font-semibold">Seed ~ Pre-A</span>
-                        </div>
-                        <div class="flex justify-between items-center border-b pb-4 mb-4">
-                            <span class="text-gray-600 font-medium">투자 형태</span>
-                            <span class="text-lg font-semibold">전환상환우선주 (RCPS)</span>
-                        </div>
-                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600 font-medium">자금 활용 계획</span>
-                            <span class="text-lg font-semibold text-right">플랫폼 개발, 마케팅, 인력 충원</span>
-                        </div>
+                <div class="mt-16 grid md:grid-cols-2 gap-8 md:gap-12 items-start">
+                    <div class="bg-white rounded-2xl shadow-xl p-8 h-full">
+                        <span class="text-sm font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">B2B</span>
+                        <h3 class="mt-4 text-2xl font-bold text-gray-900">LPPA 스마트팜 솔루션</h3>
+                        <p class="mt-4 text-gray-600">
+                            PV 개발사, 건설사, 조경 회사 등을 대상으로 Agri-Bryophyte PV 시스템 및 이끼 바이오 모듈을 판매, 설치, 유지보수하여 수익을 창출합니다.
+                        </p>
+                        <ul class="mt-4 space-y-2 text-gray-700">
+                            <li><span class="font-semibold text-gray-900">수익원:</span> 시스템 구축 및 모듈 판매</li>
+                            <li><span class="font-semibold text-gray-900">대상:</span> PV 개발사, 건설사, 지자체</li>
+                            <li><span class="font-semibold text-gray-900">가치:</span> 고수익 바이오매스 생산, 공기 정화</li>
+                        </ul>
                     </div>
-                    <div class="bg-gray-50 p-6">
-                        <h4 class="font-bold text-center mb-3">Exit 전략</h4>
-                        <p class="text-center text-gray-700">5~7년 내 IPO 또는 대기업으로의 M&A 추진</p>
-                    </div>
-                </div>
-
-                <!-- LLM Feature 1: FAQ Generation -->
-                <div class="max-w-2xl mx-auto text-center mt-8">
-                    <button id="generateFAQBtn" class="bg-indigo-500 text-white px-6 py-3 rounded-md hover:bg-indigo-600 transition font-bold shadow-lg disabled:opacity-50">
-                        ✨ 투자자를 위한 FAQ 초안 생성 (Gemini AI)
-                    </button>
-                    <div id="faqResultContainer" class="mt-4 text-left bg-white p-6 rounded-lg shadow-md hidden">
-                        <h4 class="text-xl font-bold mb-3 text-blue-600">예상 질문 및 답변 (FAQ)</h4>
-                        <div id="faqContent" class="text-gray-700 text-sm whitespace-pre-wrap"></div>
-                        <p id="faqLoading" class="text-center text-gray-500 mt-4 hidden"><span class="loading-spinner"></span> FAQ를 생성 중입니다...</p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-        
-        <section id="team" class="py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold">우리의 핵심 팀</h2>
-                    <p class="mt-4 text-gray-600">각 분야 최고의 전문가들이 LifePlan+의 성공을 위해 모였습니다.</p>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                    <div class="text-center bg-gray-50 p-8 rounded-lg">
-                        <div class="w-24 h-24 rounded-full bg-gray-300 mx-auto mb-4 flex items-center justify-center text-gray-500">
-                           <span class="text-xs">Image</span>
-                        </div>
-                        <h3 class="text-xl font-bold">김영범</h3>
-                        <p class="text-blue-600">대표 (CEO)</p>
-                        <p class="mt-2 text-sm text-gray-600">20년 이상 신규 사업 개발, 부동산 및 상조 산업 전문가</p>
-                    </div>
-                    <div class="text-center bg-gray-50 p-8 rounded-lg">
-                        <div class="w-24 h-24 rounded-full bg-gray-300 mx-auto mb-4 flex items-center justify-center text-gray-500">
-                           <span class="text-xs">Image</span>
-                        </div>
-                        <h3 class="text-xl font-bold">이하나</h3>
-                        <p class="text-blue-600">최고기술책임자 (CTO)</p>
-                        <p class="mt-2 text-sm text-gray-600">AI 및 빅데이터 플랫폼 개발 전문가, 전) 테크기업 수석 연구원</p>
-                    </div>
-                    <div class="text-center bg-gray-50 p-8 rounded-lg">
-                        <div class="w-24 h-24 rounded-full bg-gray-300 mx-auto mb-4 flex items-center justify-center text-gray-500">
-                           <span class="text-xs">Image</span>
-                        </div>
-                        <h3 class="text-xl font-bold">박준서</h3>
-                        <p class="text-blue-600">최고운영책임자 (COO)</p>
-                        <p class="mt-2 text-sm text-gray-600">금융 컨설팅 및 파트너십 전문가, 전) 자산운용사 본부장</p>
-                    </div>
-                </div>
-
-                <!-- LLM Feature 2: Strategy Idea Generation -->
-                <div class="max-w-5xl mx-auto text-center mt-12">
-                    <button id="generateIdeaBtn" class="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition font-bold shadow-lg disabled:opacity-50">
-                        ✨ 사업 확장 아이디어 얻기 (Gemini AI)
-                    </button>
-                    <div id="ideaResultContainer" class="mt-4 text-left bg-gray-100 p-6 rounded-lg shadow-md hidden">
-                         <h4 class="text-xl font-bold mb-3 text-green-600">제미나이가 제안하는 사업 확장 아이디어</h4>
-                        <div id="ideaContent" class="text-gray-700 text-sm whitespace-pre-wrap"></div>
-                        <p id="ideaLoading" class="text-center text-gray-500 mt-4 hidden"><span class="loading-spinner"></span> 아이디어를 생성 중입니다...</p>
+                    <div class="bg-white rounded-2xl shadow-xl p-8 h-full">
+                        <span class="text-sm font-bold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">B2C / B2G</span>
+                        <h3 class="mt-4 text-2xl font-bold text-gray-900">시니어 금융 신탁 (FAM) 플랫폼</h3>
+                        <p class="mt-4 text-gray-600">
+                            스마트팜 수익과 연계된 시니어 금융 신탁(FAM) 플랫폼을 운영하며 발생하는 수수료를 통해 수익을 창출합니다.
+                        </p>
+                        <ul class="mt-4 space-y-2 text-gray-700">
+                            <li><span class="font-semibold text-gray-900">수익원:</span> 플랫폼 운영 수수료 (신탁 보수)</li>
+                            <li><span class="font-semibold text-gray-900">대상:</span> 시니어 개인, 금융기관, 지자체</li>
+                            <li><span class="font-semibold text-gray-900">가치:</span> 안정적 연금형 소득 제공</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- Traction Section -->
+        <section id="traction" class="py-20 md:py-28 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-green-700 tracking-wide uppercase">Traction</h2>
+                    <p class="mt-2 text-4xl md:text-5xl font-extrabold text-gray-900">검증된 시장 반응</p>
+                    <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-600">
+                        현재 진행 중인 초기 시장 계약을 통해 라이프이점영의 솔루션이 실제 시장에서 높은 수요와 가치를 인정받고 있음을 입증하고 있습니다.
+                    </p>
+                </div>
+                <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-amber-50 p-6 rounded-xl shadow-lg text-center">
+                        <span class="text-4xl">☀️</span>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">PV 디벨로퍼</h4>
+                        <p class="mt-2 text-gray-600">태양광 하부 공간 활용의 수익성을 입증하며 파트너십 확보.</p>
+                    </div>
+                    <div class="bg-amber-50 p-6 rounded-xl shadow-lg text-center">
+                        <span class="text-4xl">🌳</span>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">조경 회사</h4>
+                        <p class="mt-2 text-gray-600">친환경적, 기능적 조경 솔루션으로서의 가치를 인정받아 계약 체결.</p>
+                    </div>
+                    <div class="bg-amber-50 p-6 rounded-xl shadow-lg text-center">
+                        <span class="text-4xl">🏙️</span>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">건설사 (공기질 개선)</h4>
+                        <p class="mt-2 text-gray-600">이끼 모듈의 공기 정화 기능으로 건설 분야 적용 가능성 확인.</p>
+                    </div>
+                    <div class="bg-amber-50 p-6 rounded-xl shadow-lg text-center">
+                        <span class="text-4xl">🏦</span>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">금융기관</h4>
+                        <p class="mt-2 text-gray-600">시니어 금융 신탁(FAM) 연계를 위한 의향서(MOU) 체결.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap Section -->
+        <section id="roadmap" class="py-20 md:py-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-green-700 tracking-wide uppercase">Roadmap</h2>
+                    <p class="mt-2 text-4xl md:text-5xl font-extrabold text-gray-900">3년 로드맵 및 확장 전략</p>
+                    <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-600">
+                        지속 가능한 성장을 위한 단계별 전략과 비전입니다. 단기 및 중장기 목표를 통해 글로벌 플랫폼 기업으로 도약합니다.
+                    </p>
+                </div>
+                
+                <div class="mt-16 max-w-5xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between rounded-lg shadow-lg bg-white">
+                        <button id="btn-phase1" class="phase-btn active flex-1 p-4 md:p-6 text-center font-bold text-lg md:text-xl rounded-t-lg md:rounded-l-lg md:rounded-tr-none transition-all duration-300">
+                            Phase 1 <span class="block text-sm font-medium">(초기)</span>
+                        </button>
+                        <button id="btn-phase2" class="phase-btn flex-1 p-4 md:p-6 text-center font-bold text-lg md:text-xl transition-all duration-300 border-t border-b md:border-l md:border-r md:border-t-0 md:border-b-0 border-gray-200">
+                            Phase 2 <span class="block text-sm font-medium">(1~3년차)</span>
+                        </button>
+                        <button id="btn-phase3" class="phase-btn flex-1 p-4 md:p-6 text-center font-bold text-lg md:text-xl rounded-b-lg md:rounded-r-lg md:rounded-bl-none transition-all duration-300">
+                            Phase 3 <span class="block text-sm font-medium">(3년차+)</span>
+                        </button>
+                    </div>
+
+                    <div class="mt-8">
+                        <div id="content-phase1" class="phase-content bg-white p-8 rounded-2xl shadow-xl">
+                            <h4 class="text-2xl font-bold text-blue-700">Phase 1: 초기 PoC 및 파트너 확보</h4>
+                            <p class="mt-4 text-gray-700">
+                                핵심 기술의 검증(PoC)을 완료하고, 초기 시장 진입을 위한 핵심 파트너사들을 확보하여 사업의 기반을 다집니다.
+                            </p>
+                            <ul class="mt-4 space-y-2 list-disc list-inside text-gray-600">
+                                <li>Agri-Bryophyte PV 시스템 PoC 완료</li>
+                                <li>핵심 파트너사 확보 (PV, 바이오, 건설, 금융)</li>
+                                <li>초기 LPPA 스마트팜 모델 구축</li>
+                            </ul>
+                        </div>
+                        <div id="content-phase2" class="phase-content hidden bg-white p-8 rounded-2xl shadow-xl">
+                            <h4 class="text-2xl font-bold text-blue-700">Phase 2: 국내 보급 확대 및 거점 확보 (1~3년차)</h4>
+                            <p class="mt-4 text-gray-700">
+                                국내 주요 PV 디벨로퍼와의 파트너십을 통해 시스템 보급을 본격화하고, 전국 주요 도시에 LPPA 스마트팜 및 FAM 서비스 거점을 구축합니다.
+                            </p>
+                            <ul class="mt-4 space-y-2 list-disc list-inside text-gray-600">
+                                <li>5개 주요 태양광 디벨로퍼 파트너십 확보</li>
+                                <li>전국 10개 도시 LPPA 스마트팜 및 FAM 거점 구축</li>
+                                <li>지역 사회 연계 강화 및 운영 안정화</li>
+                            </ul>
+                        </div>
+                        <div id="content-phase3" class="phase-content hidden bg-white p-8 rounded-2xl shadow-xl">
+                            <h4 class="text-2xl font-bold text-blue-700">Phase 3: 플랫폼 고도화 및 글로벌 확장 (3년차 이후)</h4>
+                            <p class="mt-4 text-gray-700">
+                                전국 100개 이상의 LPPA 스마트팜을 구축하고, FAM 플랫폼을 고도화합니다. 이를 기반으로 글로벌 시장에 진출하여 ESG 플랫폼 기업으로 도약합니다.
+                            </p>
+                            <ul class="mt-4 space-y-2 list-disc list-inside text-gray-600">
+                                <li>전국 100개소 LPPA 스마트팜 네트워크 구축</li>
+                                <li>FAM 금융 플랫폼 서비스 고도화</li>
+                                <li>글로벌 시장 진출 및 ESG 플랫폼 입지 확보</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team" class="py-20 md:py-28 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-green-700 tracking-wide uppercase">Team</h2>
+                    <p class="mt-2 text-4xl md:text-5xl font-extrabold text-gray-900">핵심 멤버</p>
+                    <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-600">
+                        Life2.0의 비전을 실현하는 각 분야 최고의 전문가들입니다.
+                    </p>
+                </div>
+                <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="text-center bg-amber-50 p-8 rounded-2xl shadow-lg">
+                        <div class="text-5xl">🧑‍💼</div>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">신동주</h4>
+                        <p class="mt-1 text-green-700 font-semibold">CEO (대표)</p>
+                    </div>
+                    <div class="text-center bg-amber-50 p-8 rounded-2xl shadow-lg">
+                        <div class="text-5xl">👩‍🔬</div>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">박혜린</h4>
+                        <p class="mt-1 text-green-700 font-semibold">CSO (전략)</p>
+                    </div>
+                    <div class="text-center bg-amber-50 p-8 rounded-2xl shadow-lg">
+                        <div class="text-5xl">👨‍💻</div>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">김철영</h4>
+                        <p class="mt-1 text-green-700 font-semibold">CTO (기술)</p>
+                    </div>
+                    <div class="text-center bg-amber-50 p-8 rounded-2xl shadow-lg">
+                        <div class="text-5xl">👨‍💼</div>
+                        <h4 class="mt-4 text-xl font-bold text-gray-900">이민수</h4>
+                        <p class="mt-1 text-green-700 font-semibold">CFO (재무)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <footer class="bg-gray-800 text-white">
-        <div class="container mx-auto px-6 py-12">
-            <div class="text-center">
-                <h3 class="text-2xl font-bold mb-4">LifePlan+와 함께<br>성공적인 미래를 만드십시오.</h3>
-                <p class="mb-6 text-gray-400">자세한 내용이 궁금하시면 언제든지 연락 주시기 바랍니다.</p>
-                <a href="mailto:contact@lifeplanplus.co.kr" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition inline-block">투자 문의하기</a>
-                 <div class="mt-8 text-sm text-gray-500">
-                    <p>주식회사 라이프2.0 | 대표: 김영범</p>
-                    <p>contact@lifeplanplus.co.kr</p>
-                    <p class="mt-4">© 2025 LifePlan+. All rights reserved.</p>
-                </div>
-            </div>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-2xl font-bold">Life<span class="text-green-500">2.0</span></p>
+            <p class="mt-4">Energy · Materials · Finance</p>
+            <p class="mt-4 text-sm text-gray-400">© 2025 Life2.0 Inc. All rights reserved.</p>
         </div>
     </footer>
-    
+
     <script>
-    const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent";
-    const apiKey = ""; 
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const navLinks = document.querySelectorAll('.nav-link-mobile');
 
-    async function fetchWithRetry(url, options, maxRetries = 5) {
-        for (let i = 0; i < maxRetries; i++) {
-            try {
-                const response = await fetch(url, options);
-                if (response.ok) {
-                    return response;
-                } else if (response.status === 429 && i < maxRetries - 1) {
-                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                } else {
-                    throw new Error(`API call failed with status: ${response.status}`);
-                }
-            } catch (error) {
-                if (i === maxRetries - 1) throw error;
-            }
-        }
-    }
-
-    async function generateContent(systemPrompt, userQuery, targetElementId, loadingElementId, containerElementId) {
-        const targetElement = document.getElementById(targetElementId);
-        const loadingElement = document.getElementById(loadingElementId);
-        const containerElement = document.getElementById(containerElementId);
-        const button = targetElement.closest('div').querySelector('button');
-
-        button.disabled = true;
-        containerElement.classList.remove('hidden');
-        targetElement.textContent = '';
-        loadingElement.classList.remove('hidden');
-
-        const payload = {
-            contents: [{ parts: [{ text: userQuery }] }],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-            tools: [{ "google_search": {} }], 
-        };
-
-        try {
-            const response = await fetchWithRetry(`${API_URL}?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+            mobileMenuButton.addEventListener('click', () => {
+                const isHidden = mobileMenu.classList.contains('hidden');
+                mobileMenu.classList.toggle('hidden', !isHidden);
+                mobileMenuButton.querySelector('span:not(.sr-only)').textContent = isHidden ? '✕' : '☰';
             });
-            
-            const result = await response.json();
-            const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '죄송합니다. 내용을 생성할 수 없습니다.';
-            
-            targetElement.textContent = text;
 
-        } catch (error) {
-            targetElement.textContent = 'API 호출 중 오류가 발생했습니다: ' + error.message;
-        } finally {
-            loadingElement.classList.add('hidden');
-            button.disabled = false;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        
-        const serviceTabs = document.querySelectorAll('.tab-button');
-        const servicePanels = document.querySelectorAll('.tab-panel');
-
-        serviceTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                serviceTabs.forEach(t => {
-                    t.classList.remove('text-blue-600', 'border-blue-600');
-                    t.classList.add('text-gray-500', 'border-transparent');
-                });
-                tab.classList.add('text-blue-600', 'border-blue-600');
-                tab.classList.remove('text-gray-500', 'border-transparent');
-
-                const targetPanelId = tab.getAttribute('data-target');
-                servicePanels.forEach(panel => {
-                    if (panel.id === targetPanelId) {
-                        panel.classList.remove('hidden');
-                    } else {
-                        panel.classList.add('hidden');
-                    }
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuButton.querySelector('span:not(.sr-only)').textContent = '☰';
                 });
             });
-        });
-        
-        // Chart.js initialization
-        const revenueData = {
-            labels: ['1년차', '2년차', '3년차'],
-            data: [50, 300, 1000],
-            title: '연간 예상 매출 성장 (단위: 억원)'
-        };
-        const bepData = {
-            labels: ['초기', '1년차', '2년차', '3년차'],
-            revenue: [0, 50, 300, 1000],
-            cost: [20, 100, 200, 500],
-            title: '손익분기점 분석'
-        };
 
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        const revenueChart = new Chart(revenueCtx, {
-            type: 'bar',
-            data: {
-                labels: revenueData.labels,
-                datasets: [{
-                    label: '매출액 (억원)',
-                    data: revenueData.data,
-                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: '매출액 (억원)'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-        
-        const bepCtx = document.getElementById('bepChart').getContext('2d');
-        const bepChart = new Chart(bepCtx, {
-            type: 'line',
-            data: {
-                labels: bepData.labels,
-                datasets: [{
-                    label: '비용',
-                    data: bepData.cost,
-                    borderColor: 'rgba(239, 68, 68, 1)',
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    fill: true,
-                    tension: 0.1
-                }, {
-                    label: '매출',
-                    data: bepData.revenue,
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    fill: true,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                         title: {
-                            display: true,
-                            text: '금액 (억원)'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
+            const solutionTabs = [
+                { btn: document.getElementById('btn-lppa'), content: document.getElementById('content-lppa') },
+                { btn: document.getElementById('btn-moss'), content: document.getElementById('content-moss') },
+                { btn: document.getElementById('btn-fam'), content: document.getElementById('content-fam') }
+            ];
+
+            solutionTabs.forEach(tab => {
+                tab.btn.addEventListener('click', () => {
+                    solutionTabs.forEach(t => {
+                        t.content.classList.add('hidden');
+                        t.btn.classList.remove('active');
+                    });
+                    tab.content.classList.remove('hidden');
+                    tab.btn.classList.add('active');
+                });
+            });
+
+            const phaseTabs = [
+                { btn: document.getElementById('btn-phase1'), content: document.getElementById('content-phase1') },
+                { btn: document.getElementById('btn-phase2'), content: document.getElementById('content-phase2') },
+                { btn: document.getElementById('btn-phase3'), content: document.getElementById('content-phase3') }
+            ];
+
+            phaseTabs.forEach(tab => {
+                tab.btn.addEventListener('click', () => {
+                    phaseTabs.forEach(t => {
+                        t.content.classList.add('hidden');
+                        t.btn.classList.remove('active');
+                    });
+                    tab.content.classList.remove('hidden');
+                    tab.btn.classList.add('active');
+                });
+            });
+
+            const valueChartCtx = document.getElementById('valueChart');
+            if (valueChartCtx) {
+                new Chart(valueChartCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['PV 개발사 (수익 증대)', '시니어 (소득 확보)', '지역 사회 (경제 활성화)'],
+                        datasets: [{
+                            label: '상대적 가치 기여도',
+                            data: [40, 35, 25],
+                            backgroundColor: [
+                                'rgba(21, 128, 61, 0.7)',
+                                'rgba(22, 163, 74, 0.7)',
+                                'rgba(52, 211, 153, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(21, 128, 61, 1)',
+                                'rgba(22, 163, 74, 1)',
+                                'rgba(52, 211, 153, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
                     },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'x',
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: '가치 지수'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: '이해관계자별 핵심 가치 제안',
+                                font: {
+                                    size: 18,
+                                    family: "'Noto Sans KR', sans-serif"
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y;
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
                     }
-                },
-                interaction: {
-                    mode: 'index',
-                    intersect: false
-                }
+                });
             }
         });
-
-        // LLM Feature 1: FAQ Generation
-        const investmentContent = `
-            투자 유치금: 20억원 (Seed ~ Pre-A 단계)
-            투자 형태: 전환상환우선주 (RCPS)
-            자금 활용 계획: 플랫폼 개발, 마케팅, 인력 충원
-            Exit 전략: 5~7년 내 IPO 또는 대기업으로의 M&A 추진
-            시장 규모: 2024년 85조원, 2030년 최대 520조원 전망.
-            성장률: 시니어 주거/요양/상조 시장 연평균 10~15% 성장.
-            재무 목표: 2년차 손익분기점 달성, 3년 후 매출 1,000억원, 목표 IRR 20%+
-            경쟁 우위: AI 기반 맞춤 분석 및 검증된 전문가 네트워크를 통한 원스톱 솔루션 제공.
-        `;
-
-        document.getElementById('generateFAQBtn').addEventListener('click', () => {
-            const systemPrompt = "당신은 최고의 스타트업 투자 분석가입니다. 제공된 투자 제안서의 핵심 정보를 바탕으로, 잠재 투자자들이 가장 궁금해할 만한 질문 5개와 그에 대한 간결하고 논리적인 답변을 한국어로 생성해주세요. 답변은 제안서 내용에 기반해야 하며, 각 질문과 답변은 번호로 구분해주세요. (예: 1. 질문: ... 답변: ...)";
-            const userQuery = `이 투자 제안서 내용을 분석하고 FAQ를 작성해 주세요:\n${investmentContent}`;
-            generateContent(systemPrompt, userQuery, 'faqContent', 'faqLoading', 'faqResultContainer');
-        });
-
-        // LLM Feature 2: Strategy Idea Generation
-        const teamAndMarketContent = `
-            팀: CEO (20년 이상 신규 사업/부동산/상조 전문가), CTO (AI/빅데이터 플랫폼 전문가), COO (금융 컨설팅/파트너십 전문가)
-            현재 로드맵 3단계 목표: 해외 진출 (일본), 동남아 시장 확장, 글로벌 파트너십.
-            핵심 솔루션: 종합 자산 컨설팅, 맞춤형 건강 관리, 시니어 주거 정보, 상속 및 장례 계획.
-            시장 상황: 2025년 초고령사회 진입, 시니어 산업 급성장(2030년 최대 520조원 전망).
-            경쟁 우위: AI와 전문가 네트워크를 결합한 통합 원스톱 서비스.
-        `;
-
-        document.getElementById('generateIdeaBtn').addEventListener('click', () => {
-            const systemPrompt = "당신은 세계적인 경영 전략 컨설턴트입니다. 제공된 팀 역량, 현재 로드맵, 시장 상황, 핵심 솔루션을 바탕으로 LifePlan+가 3단계 이후에 추진할 수 있는 혁신적인 신규 사업 확장 아이디어를 3가지 제시해주세요. 아이디어는 구체적인 사업 영역과 예상되는 경쟁 우위 또는 수익 창출 방안을 포함해야 합니다. 각 아이디어는 번호와 함께 제목과 설명으로 구성해주세요. 한국어로 작성해주세요. (예: 1. [제목] 설명: ...)";
-            const userQuery = `이 정보를 기반으로 신규 확장 아이디어를 제안해 주세요:\n${teamAndMarketContent}`;
-            generateContent(systemPrompt, userQuery, 'ideaContent', 'ideaLoading', 'ideaResultContainer');
-        });
-
-    });
     </script>
 </body>
 </html>
